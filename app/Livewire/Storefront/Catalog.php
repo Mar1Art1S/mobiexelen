@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Storefront;
 
+use App\Support\StorefrontProducts;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -12,18 +13,18 @@ class Catalog extends Component
 
     public string $search = '';
 
-    public array $cart = [];
-
-    public array $favorites = [];
-
     public bool $showAll = false;
 
-    public function mount(): void
-    {
-        $requestedCategory = request()->query('category');
-        $availableCategories = ['all', 'hives', 'bodies', 'bottoms', 'roofs', 'frames', 'tools'];
+    public bool $catalogPage = false;
 
-        if (is_string($requestedCategory) && in_array($requestedCategory, $availableCategories, true)) {
+    public function mount(bool $catalogPage = false, ?string $initialCategory = null): void
+    {
+        $this->catalogPage = $catalogPage;
+        $this->showAll = $catalogPage;
+
+        $requestedCategory = $initialCategory ?? request()->query('category');
+
+        if (is_string($requestedCategory) && array_key_exists($requestedCategory, $this->categories())) {
             $this->category = $requestedCategory;
             $this->showAll = true;
         }
@@ -32,8 +33,8 @@ class Catalog extends Component
     #[On('category-selected')]
     public function selectCategory(string $category): void
     {
-        $this->category = $category;
-        $this->showAll = false;
+        $this->category = array_key_exists($category, $this->categories()) ? $category : 'all';
+        $this->showAll = $this->catalogPage;
     }
 
     #[On('catalog-search')]
@@ -41,27 +42,6 @@ class Catalog extends Component
     {
         $this->search = trim($search);
         $this->showAll = true;
-    }
-
-    public function toggleFavorite(int $productId): void
-    {
-        if (in_array($productId, $this->favorites, true)) {
-            $this->favorites = array_values(array_diff($this->favorites, [$productId]));
-            $message = 'Видалено з обраного';
-        } else {
-            $this->favorites[] = $productId;
-            $message = 'Додано в обране';
-        }
-
-        $this->dispatch('favorite-count-changed', count: count($this->favorites));
-        $this->dispatch('store-toast', message: $message);
-    }
-
-    public function addToCart(int $productId): void
-    {
-        $this->cart[$productId] = ($this->cart[$productId] ?? 0) + 1;
-        $this->dispatch('cart-count-changed', count: array_sum($this->cart));
-        $this->dispatch('store-toast', message: 'Товар додано до кошика');
     }
 
     public function toggleShowAll(): void
@@ -78,6 +58,11 @@ class Catalog extends Component
             ));
     }
 
+    public function getCategoryLabelProperty(): string
+    {
+        return $this->categories()[$this->category] ?? $this->categories()['all'];
+    }
+
     public function render()
     {
         $products = $this->filteredProducts;
@@ -90,15 +75,19 @@ class Catalog extends Component
 
     private function products(): array
     {
+        return StorefrontProducts::all();
+    }
+
+    private function categories(): array
+    {
         return [
-            ['id' => 1, 'name' => 'Вулик ППУ 10-рамковий', 'price' => '4 200', 'category' => 'hives', 'tag' => 'Хіт', 'type' => 'hive-blue'],
-            ['id' => 2, 'name' => 'Корпус ППУ 10-рамковий', 'price' => '1 250', 'category' => 'bodies', 'tag' => '-10%', 'type' => 'box-yellow'],
-            ['id' => 3, 'name' => 'Кришка ППУ з вентиляцією', 'price' => '650', 'category' => 'roofs', 'tag' => '', 'type' => 'lid-gray'],
-            ['id' => 4, 'name' => 'Рамка дерев’яна 300 мм', 'price' => '350', 'category' => 'frames', 'tag' => '', 'type' => 'frame-wood'],
-            ['id' => 5, 'name' => 'Дно ППУ гігієнічне', 'price' => '790', 'category' => 'bottoms', 'tag' => 'Новинка', 'type' => 'bottom-gray'],
-            ['id' => 6, 'name' => 'Набір пасічних інструментів', 'price' => '980', 'category' => 'tools', 'tag' => '', 'type' => 'tools-set'],
-            ['id' => 7, 'name' => 'Вулик ППУ 12-рамковий', 'price' => '4 850', 'category' => 'hives', 'tag' => 'Хіт', 'type' => 'hive-yellow'],
-            ['id' => 8, 'name' => 'Магазинна надставка ППУ', 'price' => '1 100', 'category' => 'bodies', 'tag' => '', 'type' => 'box-blue'],
+            'all' => 'Усі товари',
+            'hives' => 'Готові вулики',
+            'bodies' => 'Корпуси',
+            'bottoms' => 'Дно',
+            'roofs' => 'Кришки',
+            'frames' => 'Рамки',
+            'tools' => 'Інструменти та аксесуари',
         ];
     }
 }

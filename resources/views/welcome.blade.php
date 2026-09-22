@@ -20,6 +20,7 @@
             <livewire:storefront.catalog />
             <x-storefront.promo-strip />
         </main>
+        <livewire:storefront.cart-modal />
         <livewire:storefront.contact-form />
         <x-storefront.bottom-nav />
         <div class="store-toast" role="status" aria-live="polite" x-show="toast" x-transition x-text="toast" x-cloak></div>

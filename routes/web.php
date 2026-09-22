@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 Route::view('/catalog', 'catalog')->name('catalog');
+Route::view('/shop/{category}', 'shop')
+    ->whereIn('category', ['all', 'hives', 'bodies', 'bottoms', 'roofs', 'frames', 'tools'])
+    ->name('shop.category');
 Route::view('/tips', 'tips')->name('tips');
 
 Route::middleware(['auth', 'verified'])->group(function () {

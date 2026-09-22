@@ -17,6 +17,7 @@
             <x-storefront.catalog-category-grid />
         </main>
 
+        <livewire:storefront.cart-modal />
         <livewire:storefront.contact-form />
         <x-storefront.bottom-nav active-page="catalog" />
         <div class="store-toast" role="status" aria-live="polite" x-show="toast" x-transition x-text="toast" x-cloak></div>

@@ -1,5 +1,6 @@
 @php
     $categories = [
+        ['all', 'Усі товари', null, '▦'],
         ['hives', 'Готові вулики', 'hive-blue', null],
         ['bodies', 'Корпуси', 'box-yellow', null],
         ['bottoms', 'Дно', 'bottom-gray', null],
@@ -11,7 +12,6 @@
         ['tools', 'Вощина', null, '🟨'],
         ['tools', 'Годівниці', null, '🥣'],
         ['tools', 'Комплектуючі', null, '⚙️'],
-        ['all', 'Усі товари', null, '▦'],
     ];
 @endphp
 
@@ -19,7 +19,7 @@
     @foreach ($categories as [$key, $label, $type, $symbol])
         <a
             class="catalog-category-card"
-            href="{{ route('home', ['category' => $key]).'#catalog' }}"
+            href="{{ route('shop.category', ['category' => $key]) }}"
             wire:navigate
         >
             <span class="catalog-category-visual" aria-hidden="true">

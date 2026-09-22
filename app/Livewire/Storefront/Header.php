@@ -13,6 +13,12 @@ class Header extends Component
 
     public string $search = '';
 
+    public function mount(): void
+    {
+        $this->cartCount = array_sum(session('storefront.cart', []));
+        $this->favoriteCount = count(session('storefront.favorites', []));
+    }
+
     public function updatedSearch(): void
     {
         $this->dispatch('catalog-search', search: $this->search);

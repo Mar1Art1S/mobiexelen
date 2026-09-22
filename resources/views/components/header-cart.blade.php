@@ -11,7 +11,7 @@
     {{ $attributes->class(['icon-action', 'has-badge']) }}
     type="button"
     aria-label="{{ $label }}, товарів: {{ $count }}"
-    @click="$dispatch('cart-open-requested'); $dispatch('store-toast', { message: 'У кошику: {{ $count }} товарів' })"
+    @click="$dispatch('cart-open-requested')"
 >
     <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M3 4h2l1.6 10.2h10.8l2-7.2H6" />

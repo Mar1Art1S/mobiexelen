@@ -17,6 +17,7 @@
             <x-storefront.tips-content />
         </main>
 
+        <livewire:storefront.cart-modal />
         <livewire:storefront.contact-form />
         <x-storefront.bottom-nav active-page="tips" />
         <div class="store-toast" role="status" aria-live="polite" x-show="toast" x-transition x-text="toast" x-cloak></div>
